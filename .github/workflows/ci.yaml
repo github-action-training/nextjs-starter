@@ -8,6 +8,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  run-tests:
+ run-tests:
     uses: ./.github/workflows/test.yaml
     secrets: inherit
