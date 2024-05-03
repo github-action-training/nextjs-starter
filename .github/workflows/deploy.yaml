@@ -65,8 +65,6 @@ jobs:
       - name: Install EB CLI
         id: install-eb-cli
         run: pip install awsebcli
-      - name: Print environment variables
-        run: echo "Flagsmith Key: ${{ secrets.FLAGSMITH_KEY }}"
       - name: Get AWS ENV Name
         id: get-env-name
         run: echo "aws_env=$(aws elasticbeanstalk describe-environments --application-name ${{vars.AWS_EB_APP_NAME}} --environment-names ${{ inputs.aws-env}} --query "Environments[0].EnvironmentName" --output text)" >> $GITHUB_OUTPUT
@@ -75,7 +73,7 @@ jobs:
         id: get-env-status
         run: echo "aws_env_status=$(aws elasticbeanstalk describe-environments --application-name ${{vars.AWS_EB_APP_NAME}} --environment-names ${{ inputs.aws-env}} --query "Environments[0].Status" --output text)" >> $GITHUB_OUTPUT
       - name: Initialize EB
-        run: eb init ${{vars.AWS_EB_APP_NAME}} --platform ${{vars.AWS_EB_PLATFORM}} --region ${{vars.AWS_REGION}}
+        run: eb init ${{vars.AWS_EB_APP_NAME}} --platform "${{vars.AWS_EB_PLATFORM}}"  --region ${{vars.AWS_REGION}}
       - name: Create a New Environment
         if: steps.get-env-name.outputs.aws_env == 'None' || steps.get-env-status.outputs.aws_env_status == 'Terminated'
         run: eb create ${{ inputs.aws-env }} --instance-types ${{vars.AWS_EB_ENV_INSTANCE_TYPES}} --cname ${{ inputs.aws-env }} --envvars FLAGSMITH_KEY=${{ secrets.FLAGSMITH_KEY}}
